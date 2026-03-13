@@ -1,17 +1,17 @@
-// ╔══════════════════════════════════════════════════════════════╗
+// ==============================================================
 //  AK COFFEE HOUSE - v5.0 | THE COMPLETE EXPERIENCE
-//  ─────────────────────────────────────────────────────────────
+//  --------------------------------------------------------------
 //  NEW IN v5.0:
-//  ✔ Loyalty Points System  (earn 1 pt per $1 spent)
-//  ✔ Redeem Points          ($5 off every 50 pts)
-//  ✔ Full Input Validation  (no crashes on bad input)
-//  ✔ Order Modification     (remove item before checkout)
-//  ✔ Animated Progress Bar  (barista crafting your order)
-//  ✔ Multi-line Order Summary before receipt
-//  ✔ Structured receipt with all discounts itemised
-//  ✔ Random unique Order ID + timestamp
-//  ✔ Clean, modular functions (easy to maintain/extend)
-// ╚══════════════════════════════════════════════════════════════╝
+//  [+] Loyalty Points System  (earn 1 pt per $1 spent)
+//  [+] Redeem Points          ($5 off every 50 pts)
+//  [+] Full Input Validation  (no crashes on bad input)
+//  [+] Order Modification     (remove item before checkout)
+//  [+] Animated Progress Bar  (barista crafting your order)
+//  [+] Multi-line Order Summary before receipt
+//  [+] Structured receipt with all discounts itemised
+//  [+] Random unique Order ID + timestamp
+//  [+] Clean, modular functions (easy to maintain/extend)
+// ==============================================================
 
 #include <iostream>
 #include <iomanip>
@@ -27,14 +27,14 @@
 using namespace std;
 typedef double Currency;
 
-// ─── Constants ───────────────────────────────────────────────
-const double   TAX_RATE        = 0.05;
-const Currency PACKAGING_FEE   = 0.50;
-const Currency FREE_CUP_REWARD = 5.00;
-const int      LOYALTY_REDEEM_THRESHOLD = 50;   // pts needed to redeem
-const Currency LOYALTY_REDEEM_VALUE     = 5.00; // $ value per redemption
+// --- Constants ------------------------------------------------
+const double   TAX_RATE                 = 0.05;
+const Currency PACKAGING_FEE           = 0.50;
+const Currency FREE_CUP_REWARD         = 5.00;
+const int      LOYALTY_REDEEM_THRESHOLD = 50;
+const Currency LOYALTY_REDEEM_VALUE    = 5.00;
 
-// ─── Data Structures ─────────────────────────────────────────
+// --- Data Structures ------------------------------------------
 struct CoffeeSpecs {
     int milkChoice;  // 1=Soy  2=Regular  3=Almond
     int milkTemp;    // 1=Hot  2=Iced
@@ -58,7 +58,7 @@ struct MenuEntry {
     Currency basePrice;
 };
 
-// ─── Menu Data ───────────────────────────────────────────────
+// --- Menu Data ------------------------------------------------
 const MenuEntry MENU[8] = {
     {"Cappuccino",        6.00},
     {"Cafe Latte",        6.50},
@@ -70,11 +70,11 @@ const MenuEntry MENU[8] = {
     {"Flat White",        6.75}
 };
 
-const string SIZE_NAMES[6]    = {"Demi","Short","Tall","Grande","Venti","Trenta"};
-const Currency SIZE_UP[6]     = {0.00,  1.00,   1.50,  2.25,    3.50,   4.50};
-const string MILK_NAMES[3]    = {"Soy","Regular","Almond"};
+const string   SIZE_NAMES[6] = {"Demi","Short","Tall","Grande","Venti","Trenta"};
+const Currency SIZE_UP[6]    = {0.00,  1.00,   1.50,  2.25,    3.50,   4.50};
+const string   MILK_NAMES[3] = {"Soy","Regular","Almond"};
 
-// ─── Utility Helpers ─────────────────────────────────────────
+// --- Utility Helpers ------------------------------------------
 int readInt(const string& prompt, int lo, int hi) {
     int val;
     while (true) {
@@ -86,13 +86,13 @@ int readInt(const string& prompt, int lo, int hi) {
     }
 }
 
-void separator(char c = '-', int w = 65) { cout << string(w, c) << endl; }
+void separator(char c = '-', int w = 65) { cout << string(w, c) << "\n"; }
 
-// ─── Display Functions ───────────────────────────────────────
+// --- Display Functions ----------------------------------------
 void displayGreeting() {
-    time_t t   = time(0);
-    tm*  now   = localtime(&t);
-    int  hour  = now->tm_hour;
+    time_t t  = time(0);
+    tm*  now  = localtime(&t);
+    int  hour = now->tm_hour;
 
     cout << "\n" << setfill('*') << setw(65) << "" << "\n";
     if (hour < 12)
@@ -140,7 +140,7 @@ void displayCart(const vector<OrderItem>& cart) {
 }
 
 void showProgressBar() {
-    cout << "\n  [Barista is crafting your order...]\n  ";
+    cout << "\n  [Barista is crafting your order...]\n";
     string bar(20, '-');
     for (int i = 0; i < 20; ++i) {
         bar[i] = '#';
@@ -150,28 +150,28 @@ void showProgressBar() {
     cout << "\n\n";
 }
 
-// ─── Loyalty Points ──────────────────────────────────────────
+// --- Loyalty Points -------------------------------------------
 void showLoyaltyInfo(int pts) {
-    cout << "\n  ★ LOYALTY POINTS: " << pts << " pts";
+    cout << "\n  [*] LOYALTY POINTS: " << pts << " pts";
     if (pts >= LOYALTY_REDEEM_THRESHOLD)
-        cout << "  →  You can redeem " << (pts / LOYALTY_REDEEM_THRESHOLD)
+        cout << "  ->  You can redeem " << (pts / LOYALTY_REDEEM_THRESHOLD)
              << " reward(s) worth $"
              << fixed << setprecision(2)
              << (pts / LOYALTY_REDEEM_THRESHOLD) * LOYALTY_REDEEM_VALUE << "!";
     cout << "\n";
 }
 
-// ─── Main ────────────────────────────────────────────────────
+// --- Main -----------------------------------------------------
 int main() {
     vector<OrderItem> cart;
-    int totalQty    = 0;
-    int loyaltyPts  = 0;  // simulate persistent points (starts at 0 this session)
+    int  totalQty   = 0;
+    int  loyaltyPts = 0;
     char choice;
 
     displayGreeting();
     displayMenu();
 
-    // ── Ordering Loop ───────────────────────────────────────
+    // Ordering Loop
     do {
         OrderItem item;
         int id = readInt("\nEnter Item ID (1-8): ", 1, 8);
@@ -195,13 +195,13 @@ int main() {
         totalQty += item.qty;
         cart.push_back(item);
 
-        cout << "  ✔ " << item.tempLabel << " " << item.sizeName << " "
+        cout << "  [+] " << item.tempLabel << " " << item.sizeName << " "
              << item.name << " [" << item.milkLabel << " milk] x"
              << item.qty << " added to cart!\n";
 
         displayCart(cart);
 
-        // ── Cart Management ─────────────────────────────
+        // Cart Management
         cout << "  Options: [y] Add more  [r] Remove item  [n] Checkout\n";
         cout << "  Choice: "; cin >> choice;
 
@@ -209,12 +209,12 @@ int main() {
             if (!cart.empty()) {
                 int removeIdx = readInt("  Enter item # to remove: ", 1, (int)cart.size());
                 totalQty -= cart[removeIdx-1].qty;
-                cout << "  ✖ Removed: " << cart[removeIdx-1].name << "\n";
+                cout << "  [-] Removed: " << cart[removeIdx-1].name << "\n";
                 cart.erase(cart.begin() + removeIdx - 1);
             } else {
                 cout << "  Cart is already empty.\n";
             }
-            choice = 'y'; // keep loop going after removal
+            choice = 'y';
         }
 
     } while (choice == 'y' || choice == 'Y');
@@ -224,60 +224,56 @@ int main() {
         return 0;
     }
 
-    // ── Customer Info ────────────────────────────────────────
+    // Customer Info
     cout << "\n"; separator('=');
     int studentChoice = readInt("Are you a student? (1:Yes  2:No): ", 1, 2);
     int serviceChoice = readInt("Service type      (1:Dine-in  2:Takeaway): ", 1, 2);
 
-    // ── Loyalty Redemption ───────────────────────────────────
-    // (Simulate: user already has some points from past visits)
-    loyaltyPts = 75; // example: returning customer has 75 pts
+    // Loyalty Redemption
+    loyaltyPts = 75; // example: returning customer
     showLoyaltyInfo(loyaltyPts);
 
-    int redeemChoice = 0;
-    int redeemable   = loyaltyPts / LOYALTY_REDEEM_THRESHOLD;
+    int      redeemChoice    = 0;
+    int      redeemable      = loyaltyPts / LOYALTY_REDEEM_THRESHOLD;
     Currency loyaltyDiscount = 0.00;
+
     if (redeemable > 0) {
-        cout << "  Redeem loyalty points? (1:Yes  2:No): ";
         redeemChoice = readInt("  Redeem loyalty points? (1:Yes  2:No): ", 1, 2);
         if (redeemChoice == 1) {
             int howMany = readInt(
                 "  How many rewards to redeem? (1-" + to_string(redeemable) + "): ",
                 1, redeemable);
-            loyaltyDiscount = howMany * LOYALTY_REDEEM_VALUE;
-            loyaltyPts     -= howMany * LOYALTY_REDEEM_THRESHOLD;
+            loyaltyDiscount  = howMany * LOYALTY_REDEEM_VALUE;
+            loyaltyPts      -= howMany * LOYALTY_REDEEM_THRESHOLD;
         }
     }
 
     showProgressBar();
 
-    // ── Calculations ─────────────────────────────────────────
-    Currency subtotal        = 0;
+    // Calculations
+    Currency subtotal       = 0;
     for (const auto& e : cart) subtotal += (e.unitPrice * e.qty);
 
     Currency studentDiscount = (studentChoice == 1) ? (subtotal * 0.10) : 0.00;
     Currency bulkReward      = (totalQty > 10) ? FREE_CUP_REWARD : 0.00;
     Currency packing         = (serviceChoice == 2) ? PACKAGING_FEE : 0.00;
-
     Currency afterDiscounts  = subtotal - studentDiscount - bulkReward - loyaltyDiscount + packing;
     if (afterDiscounts < 0) afterDiscounts = 0;
 
-    Currency tax             = afterDiscounts * TAX_RATE;
-    Currency total           = afterDiscounts + tax;
+    Currency tax   = afterDiscounts * TAX_RATE;
+    Currency total = afterDiscounts + tax;
 
-    // Earn new loyalty points
-    int earnedPts  = (int)total;
-    loyaltyPts    += earnedPts;
+    int earnedPts = (int)total;
+    loyaltyPts   += earnedPts;
 
-    // ── Receipt ──────────────────────────────────────────────
+    // Receipt
     srand(time(0));
-    int   uniqueID = rand() % 9000 + 1000;
-    time_t t_now   = time(0);
-    tm* r_now      = localtime(&t_now);
+    int    uniqueID = rand() % 9000 + 1000;
+    time_t t_now    = time(0);
+    tm*    r_now    = localtime(&t_now);
 
     cout << setfill('#') << setw(65) << "" << "\n" << setfill(' ');
-    cout << "  ORDER #" << uniqueID
-         << "  |  DATE: "
+    cout << "  ORDER #" << uniqueID << "  |  DATE: "
          << setw(2) << setfill('0') << (r_now->tm_mon + 1) << "/"
          << setw(2) << r_now->tm_mday << "/"
          << (r_now->tm_year + 1900) << setfill(' ') << "\n";
@@ -289,12 +285,11 @@ int main() {
                      + " [" + e.milkLabel + "]";
         cout << "  " << left << setw(45) << label
              << "x" << setw(4) << e.qty
-             << "$" << fixed << setprecision(2)
-             << (e.unitPrice * e.qty) << "\n";
+             << "$" << fixed << setprecision(2) << (e.unitPrice * e.qty) << "\n";
     }
 
     separator();
-    cout << left << setw(50) << "  SUBTOTAL:"       << "$" << fixed << setprecision(2) << subtotal       << "\n";
+    cout << left << setw(50) << "  SUBTOTAL:"              << "$"  << fixed << setprecision(2) << subtotal        << "\n";
     if (studentDiscount > 0)
         cout << left << setw(50) << "  STUDENT DISCOUNT (10%):"    << "-$" << studentDiscount  << "\n";
     if (bulkReward > 0)
@@ -303,19 +298,19 @@ int main() {
         cout << left << setw(50) << "  LOYALTY REWARD REDEEMED:"   << "-$" << loyaltyDiscount  << "\n";
     if (serviceChoice == 2)
         cout << left << setw(50) << "  PACKAGING FEE (TAKEAWAY):"  << "+$" << packing          << "\n";
-    cout << left << setw(50) << "  TAX (5%):"       << "+$" << tax   << "\n";
+    cout << left << setw(50) << "  TAX (5%):"               << "+$" << tax                     << "\n";
     separator();
-    cout << left << setw(50) << "  TOTAL PAYABLE:"  << " $" << total  << "\n";
+    cout << left << setw(50) << "  TOTAL PAYABLE:"          << " $" << total                   << "\n";
     separator('=');
 
-    cout << "\n  ★ LOYALTY POINTS EARNED THIS ORDER: +" << earnedPts << " pts\n";
-    cout << "  ★ YOUR NEW BALANCE: " << loyaltyPts << " pts";
+    cout << "\n  [*] LOYALTY POINTS EARNED THIS ORDER: +" << earnedPts << " pts\n";
+    cout << "  [*] YOUR NEW BALANCE: " << loyaltyPts << " pts";
     if (loyaltyPts >= LOYALTY_REDEEM_THRESHOLD)
         cout << "  (Ready to redeem on next visit!)";
     cout << "\n\n";
 
     separator('=');
-    cout << "         ☕  THANK YOU!  YOUR BREW IS READY.  ☕\n";
+    cout << "           THANK YOU! YOUR BREW IS READY.\n";
     cout << "         Visit us again at AK COFFEE HOUSE!\n";
     separator('=');
     cout << "\n";
