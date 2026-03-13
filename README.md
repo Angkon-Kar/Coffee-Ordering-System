@@ -32,3 +32,13 @@ A console-based coffee ordering system built with **C++**, developed progressive
 
 </details>
 
+## 📁 Project Structure
+
+```
+coffee-ordering-system/
+├── cafe.cpp            ← single source file (version controlled via Git tags)
+├── screenshots/
+│   ├── v2_output.png
+│   ├── v3_output.png
+└── README.md
+```
